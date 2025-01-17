@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"github.com/appu900/authservice/database"
+	"github.com/appu900/authservice/handlers"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -17,6 +18,8 @@ func main() {
 	app.Get("/pingme", func(c *fiber.Ctx) error {
 		return c.SendString("Pinged auth service")
 	})
+
+	app.Post("/api/register", handlers.Register)
 
 	log.Fatal(app.Listen(":3000"))
 }

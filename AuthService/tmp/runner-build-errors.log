@@ -1,0 +1,2 @@
+handlers\auth.go:7:2: no required module provides package github.com/golang-jwt/jwt; to add it:
+	go get github.com/golang-jwt/jwt
