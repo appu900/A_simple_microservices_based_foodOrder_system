@@ -107,8 +107,34 @@ func HandleLogin(c *fiber.Ctx) error {
 		})
 	}
 
+	// check if account is locked or not
+	if user.LockedUntill != nil && time.Now().Before(*user.LockedUntill) {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Account is Locked Please try again later",
+		})
+	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
+		user.FailedAttempts++
+		if user.FailedAttempts >= 5{
+			lockUntil := time.Now().Add(time.Minute * 15)
+			user.LockedUntill = &lockUntil
+		}
+		// update in the db : the locked time
+
+		_,updatedError := userCollection.UpdateOne(
+			c.Context(),
+			bson.M{"_id":user.ID},
+			bson.M{"$set":bson.M{
+				"failed_attempts":user.FailedAttempts,
+				"locked_until":user.LockedUntill,
+			}},
+		)
+
+		if updatedError != nil {
+			fmt.Println("Failed to update login attempts",updatedError)
+		}
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Incorrect Password",
 		})

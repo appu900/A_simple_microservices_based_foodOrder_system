@@ -2,6 +2,7 @@ package models
 
 import (
 	"time"
+
 	"github.com/appu900/authservice/database"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -10,14 +11,16 @@ import (
 )
 
 type User struct {
-	ID        primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Email     string             `json:"email" bson:"email,omitempty"`
-	Username  string             `json:"username" bson:"username"`
-	Password  string             `json:"password" bson:"password"`
-	CreatedAt time.Time          `json:"created_at" bson:"created_at"`
-	UpdatedAt time.Time          `json:"updated_at" bson:"updated_at"`
-	LastLogin *time.Time         `json:"last_login,omitempty" bson:"last_login,omitempty"`
-	Active    bool               `json:"active" bson:"active" default:"true"`
+	ID             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Email          string             `json:"email" bson:"email,omitempty"`
+	Username       string             `json:"username" bson:"username"`
+	Password       string             `json:"password" bson:"password"`
+	CreatedAt      time.Time          `json:"created_at" bson:"created_at"`
+	UpdatedAt      time.Time          `json:"updated_at" bson:"updated_at"`
+	LastLogin      *time.Time         `json:"last_login,omitempty" bson:"last_login,omitempty"`
+	FailedAttempts int                `json:"failed_attempts" bson:"failed_attempts"`
+	LockedUntill   *time.Time         `json:"locked_until" bson:"locked_until"`
+	Active         bool               `json:"active" bson:"active" default:"true"`
 }
 
 func NewUser(username, password, email string) *User {
