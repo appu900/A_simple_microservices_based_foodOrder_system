@@ -11,6 +11,7 @@ type Dish struct {
 	Price       float64            `json:"price,omitempty" bson:"price,omitempty"`
 	Description string             `json:"description,omitempty" bson:"description,omitempty"`
 	Photo       string             `json:"photo,omitempty" bson:"photo,omitempty"`
+	Avaliable   bool               `json:"avaliable,omitempty" bson:"avaliable,omitempty"`
 }
 
 type Restaurant struct {
@@ -21,6 +22,16 @@ type Restaurant struct {
 	Address    string               `json:"address,omitempty" bson:"address,omitempty"`
 	Created_At time.Time            `json:"created_at,omitempty" bson:"created_at,omitempty"`
 	Updated_At time.Time            `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+func NewDish(name string, price float64, description string, photoUrl string) *Dish {
+	return &Dish{
+		ID:          primitive.NewObjectID(),
+		Name:        name,
+		Price:       price,
+		Description: description,
+		Photo:       photoUrl,
+	}
 }
 
 func NewRestaurant(name, photoUrl, address string) *Restaurant {
