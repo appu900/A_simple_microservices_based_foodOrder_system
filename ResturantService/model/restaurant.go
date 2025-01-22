@@ -1,0 +1,36 @@
+package model
+
+import (
+	"time"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+type Dish struct {
+	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+	Name        string             `json:"name,omitempty" bson:"name,omitempty"`
+	Price       float64            `json:"price,omitempty" bson:"price,omitempty"`
+	Description string             `json:"description,omitempty" bson:"description,omitempty"`
+	Photo       string             `json:"photo,omitempty" bson:"photo,omitempty"`
+}
+
+type Restaurant struct {
+	ID         primitive.ObjectID   `json:"id,omitempty" bson:"_id,omitempty"`
+	Name       string               `json:"name,omitempty" bson:"name,omitempty"`
+	Menu       []primitive.ObjectID `json:"menu,omitempty" bson:"menu,omitempty"` // Dish IDs
+	Photo      string               `json:"photo,omitempty" bson:"photo,omitempty"`
+	Address    string               `json:"address,omitempty" bson:"address,omitempty"`
+	Created_At time.Time            `json:"created_at,omitempty" bson:"created_at,omitempty"`
+	Updated_At time.Time            `json:"updated_at,omitempty" bson:"updated_at,omitempty"`
+}
+
+func NewRestaurant(name, photoUrl, address string) *Restaurant {
+	now := time.Now()
+	return &Restaurant{
+		ID:         primitive.NewObjectID(),
+		Name:       name,
+		Photo:      photoUrl,
+		Address:    address,
+		Created_At: now,
+		Updated_At: now,
+	}
+}

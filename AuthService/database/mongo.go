@@ -28,3 +28,4 @@ func Connect() error {
 func GetCollection(collectionName string) *mongo.Collection {
 	return Client.Database("auth_db").Collection(collectionName)
 }
+
