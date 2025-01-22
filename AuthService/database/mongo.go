@@ -10,7 +10,7 @@ import (
 var Client *mongo.Client
 
 func Connect() error {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://msubham193:sonu@cluster0.62xyd.mongodb.net/prisma-skillassement?retryWrites=true&w=majority")
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		return err

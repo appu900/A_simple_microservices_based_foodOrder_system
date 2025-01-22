@@ -14,6 +14,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+
+// ** HandleUserRegistration function
+
 func HandleUserRegistration(c *fiber.Ctx) error {
 	userCollection := database.GetCollection("users")
 	var input struct {
@@ -73,6 +76,7 @@ func HandleUserRegistration(c *fiber.Ctx) error {
 
 }
 
+// ** HandleLogin function
 func HandleLogin(c *fiber.Ctx) error {
 	var input struct {
 		Email    string `json:"email"`
@@ -117,23 +121,23 @@ func HandleLogin(c *fiber.Ctx) error {
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
 	if err != nil {
 		user.FailedAttempts++
-		if user.FailedAttempts >= 5{
+		if user.FailedAttempts >= 5 {
 			lockUntil := time.Now().Add(time.Minute * 15)
 			user.LockedUntill = &lockUntil
 		}
 		// update in the db : the locked time
 
-		_,updatedError := userCollection.UpdateOne(
+		_, updatedError := userCollection.UpdateOne(
 			c.Context(),
-			bson.M{"_id":user.ID},
-			bson.M{"$set":bson.M{
-				"failed_attempts":user.FailedAttempts,
-				"locked_until":user.LockedUntill,
+			bson.M{"_id": user.ID},
+			bson.M{"$set": bson.M{
+				"failed_attempts": user.FailedAttempts,
+				"locked_until":    user.LockedUntill,
 			}},
 		)
 
 		if updatedError != nil {
-			fmt.Println("Failed to update login attempts",updatedError)
+			fmt.Println("Failed to update login attempts", updatedError)
 		}
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Incorrect Password",
@@ -179,3 +183,8 @@ func HandleLogin(c *fiber.Ctx) error {
 		TokenType: "Bearer",
 	})
 }
+
+
+
+
+ 

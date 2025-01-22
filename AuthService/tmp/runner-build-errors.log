@@ -1,0 +1,2 @@
+# github.com/appu900/authservice/middleware
+middleware\authmiddleware.go:60:1: syntax error: non-declaration statement outside function body
