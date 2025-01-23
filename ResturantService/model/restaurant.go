@@ -1,8 +1,14 @@
 package model
 
 import (
+	"context"
+	"log"
+	"resturantService/database"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type GeoJSON struct {
@@ -55,4 +61,18 @@ func NewRestaurant(name, photoUrl, address string, longitude, lattitude float64)
 			Coordinates: []float64{longitude, lattitude}, // Default location [0, 0]
 		},
 	}
+}
+
+// make index for location query based on user location
+func CreateGeospatialIndex() {
+	collection := database.GetCollection("restaurants")
+	indexModel := mongo.IndexModel{
+		Keys: bson.M{"location": "2dsphere"},
+	}
+
+	_, err := collection.Indexes().CreateOne(context.TODO(), indexModel)
+	if err != nil {
+		log.Fatalf("Failed to create geospatial index: %v", err)
+	}
+	log.Println("Geospactical Index created successfully")
 }

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"resturantService/database"
 	"resturantService/model"
 	"resturantService/utils"
@@ -231,13 +232,15 @@ func GetRestaurants(c *fiber.Ctx) error {
 					"type":        "Point",
 					"coordinates": []float64{inputData.Longitude, inputData.Lattitude},
 				},
-				"$maxDistance": 5000, // 3 kilometers in meters
+				"$maxDistance": 5000,
+				 // 3 kilometers in meters
 			},
 		},
 	}
 
 	cursor, err := restaurantCollection.Find(c.Context(), query)
 	if err != nil {
+		log.Print("Error fetching restaurants By Location: ", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Database error",
 		})

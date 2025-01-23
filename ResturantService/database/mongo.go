@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"log"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -27,9 +26,9 @@ func ConnectDB() error {
 	return nil
 }
 
-
-
-
 func GetCollection(collectionName string) *mongo.Collection {
 	return Client.Database("resturant_db").Collection(collectionName)
 }
+
+
+
