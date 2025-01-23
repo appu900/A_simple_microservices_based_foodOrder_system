@@ -7,7 +7,6 @@ import (
 	"resturantService/model"
 	"resturantService/utils"
 	"sync"
-
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -150,6 +149,38 @@ func AddDishes(c *fiber.Ctx) error {
 
 }
 
+// Get all menu of a restaurant
+// GET /restaurants/:id/menu
+// Response:
+//
+//	{
+//	  "ok": true,
+//	  "data": [
+//	    {
+//	      "_id": "607e796295309d44888175d3",
+//	      "name": "Pizza",
+//	      "price": 15.99,
+//	      "description": "Delicious pizza with tomatoes, mozzarella, and basil.",
+//	      "photo": "https://example.com/images/pizza.jpg"
+//	    },
+//	    //... more dishes
+//	  ]
+//	}
+//
+// Error Response:
+//
+//	{
+//	  "error": "Invalid restaurant id"
+//	}
+//
+// Error Response:
+//
+//	{
+//	  "error": "Database error"
+//	}
+//
+// Error Response:
+// {
 func GetAllMenu(c *fiber.Ctx) error {
 	restaurantId := c.Params("id")
 	if restaurantId == "" {
@@ -212,7 +243,6 @@ func GetAllMenu(c *fiber.Ctx) error {
 
 // Get all resturants in a given location with pegination
 // the redius is in kilometers is 3 km only
-
 func GetRestaurants(c *fiber.Ctx) error {
 	var inputData struct {
 		Longitude float64 `json:"longitude"`
@@ -233,7 +263,7 @@ func GetRestaurants(c *fiber.Ctx) error {
 					"coordinates": []float64{inputData.Longitude, inputData.Lattitude},
 				},
 				"$maxDistance": 5000,
-				 // 3 kilometers in meters
+				// 3 kilometers in meters
 			},
 		},
 	}
