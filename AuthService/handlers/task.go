@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"time"
-
 	"github.com/appu900/authservice/database"
 	"github.com/appu900/authservice/models"
 	"github.com/gofiber/fiber/v2"

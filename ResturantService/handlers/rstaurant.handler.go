@@ -6,6 +6,7 @@ import (
 	"resturantService/model"
 	"resturantService/utils"
 	"sync"
+
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -23,9 +24,11 @@ func IntiDishCollection() {
 
 func AddRestaurant(c *fiber.Ctx) error {
 	var inputData struct {
-		Name    string `json:"name"`
-		Address string `json:"address"`
-		Photo   string `json:"photo"`
+		Name      string  `json:"name"`
+		Address   string  `json:"address"`
+		Photo     string  `json:"photo"`
+		Lattitude float64 `json:"lattitude"`
+		Longitude float64 `json:"longitude"`
 	}
 
 	if err := c.BodyParser(&inputData); err != nil {
@@ -55,7 +58,7 @@ func AddRestaurant(c *fiber.Ctx) error {
 	}
 
 	collection := database.GetCollection("restaurants")
-	newRestaurantObject := model.NewRestaurant(inputData.Name, photoUrl, inputData.Address)
+	newRestaurantObject := model.NewRestaurant(inputData.Name, photoUrl, inputData.Address, inputData.Longitude, inputData.Lattitude)
 	_, err = collection.InsertOne(c.Context(), newRestaurantObject)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -202,6 +205,54 @@ func GetAllMenu(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"ok":   true,
-		"data": results[0]["menuDetails"],
+		"data": results,
+	})
+}
+
+// Get all resturants in a given location with pegination
+// the redius is in kilometers is 3 km only
+
+func GetRestaurants(c *fiber.Ctx) error {
+	var inputData struct {
+		Longitude float64 `json:"longitude"`
+		Lattitude float64 `json:"lattitude"`
+	}
+	if err := c.BodyParser(&inputData); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+
+	var restaurantCollection = database.GetCollection("restaurants")
+	query := bson.M{
+		"location": bson.M{
+			"$near": bson.M{
+				"$geometry": bson.M{
+					"type":        "Point",
+					"coordinates": []float64{inputData.Longitude, inputData.Lattitude},
+				},
+				"$maxDistance": 5000, // 3 kilometers in meters
+			},
+		},
+	}
+
+	cursor, err := restaurantCollection.Find(c.Context(), query)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Database error",
+		})
+	}
+	defer cursor.Close(c.Context())
+
+	var restaurants []model.Restaurant
+	if err = cursor.All(c.Context(), &restaurants); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Something went wrong while fetching restaurants",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"ok":   true,
+		"data": restaurants,
 	})
 }
