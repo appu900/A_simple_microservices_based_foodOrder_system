@@ -10,7 +10,7 @@ import (
 var Client *mongo.Client
 
 func Connect() error {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI("mongodb://mongodb-primary:27017,mongodb-replica:27017/?replicaSet=rs0")
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		return err

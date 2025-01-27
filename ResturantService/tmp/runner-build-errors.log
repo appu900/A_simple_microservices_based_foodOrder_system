@@ -1,3 +1,0 @@
-# resturantService/handlers
-handlers\dish.handler.go:6:27: undefined: fiber
-handlers\dish.handler.go:8:1: missing return

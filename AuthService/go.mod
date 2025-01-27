@@ -1,7 +1,6 @@
 module github.com/appu900/authservice
 
-go 1.23.2
-
+go 1.20
 require go.mongodb.org/mongo-driver v1.17.2
 
 require (
