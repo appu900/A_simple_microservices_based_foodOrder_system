@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+
 	"github.com/appu900/authservice/database"
 	"github.com/appu900/authservice/handlers"
 	"github.com/appu900/authservice/middleware"
@@ -21,6 +22,7 @@ func main() {
 	app.Post("/api/task/create", middleware.AuthMiddleware(), handlers.HandleCreateTask)
 	app.Get("/api/task/get", middleware.AuthMiddleware(), handlers.HandleGetAlltasksOfUser)
 	app.Put("/api/task/update/:id", middleware.AuthMiddleware(), handlers.HandleUpdateTask)
+	app.Post("/api/users/validate", middleware.AuthMiddleware(), handlers.HandleValidateUser)
 
 	log.Fatal(app.Listen(":3000"))
 }

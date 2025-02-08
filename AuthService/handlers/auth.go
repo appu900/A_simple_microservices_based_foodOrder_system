@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"time"
+
 	"github.com/appu900/authservice/database"
 	"github.com/appu900/authservice/models"
 	"github.com/appu900/authservice/types"
@@ -10,10 +11,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
-
 
 // ** HandleUserRegistration function
 
@@ -184,7 +185,27 @@ func HandleLogin(c *fiber.Ctx) error {
 	})
 }
 
-
-
-
- 
+func HandleValidateUser(c *fiber.Ctx) error {
+	var user models.User
+	userId := c.Locals("user_id").(primitive.ObjectID)
+	filter := bson.M{
+		"_id":    userId,
+		"active": true,
+	}
+	collection := database.GetCollection("users")
+	err := collection.FindOne(c.Context(), filter).Decode(&user)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": "User not found",
+			})
+		}
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Internal Server Error",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"status": "ok",
+		"user":   user,
+	})
+}

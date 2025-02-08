@@ -10,7 +10,8 @@ import (
 var Client *mongo.Client
 
 func Connect() error {
-	clientOptions := options.Client().ApplyURI("mongodb://mongodb-primary:27017,mongodb-replica:27017/?replicaSet=rs0")
+	// Replace with your MongoDB connection string.
+	clientOptions := options.Client().ApplyURI("mongodb+srv://codingPeers:220720100141%40Code@codepeers.mpjti.mongodb.net/?retryWrites=true&w=majority&appName=codePeers")
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		return err
@@ -28,4 +29,8 @@ func Connect() error {
 func GetCollection(collectionName string) *mongo.Collection {
 	return Client.Database("auth_db").Collection(collectionName)
 }
+
+
+
+
 
